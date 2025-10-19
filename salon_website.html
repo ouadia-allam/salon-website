@@ -1,0 +1,62 @@
+<form id="bookingForm">
+  <label for="name">Full Name:</label><br>
+  <input type="text" id="name" name="name" required><br><br>
+
+  <label for="phone">Phone:</label><br>
+  <input type="tel" id="phone" name="phone" required><br><br>
+
+  <label for="service">Service:</label><br>
+  <select id="service" name="service" required>
+    <option value="Men's Haircut">Men's Haircut</option>
+    <option value="Women's Haircut">Women's Haircut</option>
+    <option value="Children's Haircut">Children's Haircut</option>
+    <option value="Beard Trim">Beard Trim</option>
+    <option value="Coloring">Coloring</option>
+    <option value="Styling">Styling</option>
+  </select><br><br>
+
+  <label for="date">Date:</label><br>
+  <input type="date" id="date" name="date" required><br><br>
+
+  <label for="notes">Notes:</label><br>
+  <textarea id="notes" name="notes"></textarea><br><br>
+
+  <button type="submit" id="bookingForm">Submit</button>
+</form>
+
+<p id="responseMsg" style="color: green; font-weight: bold;"></p>
+
+<script>
+  const scriptURL = "https://script.google.com/macros/s/AKfycbw85UEkiRTSW1z7w4A_7hP1WjUsMaL2tilXPD1YCzD9OM1WuH-44D3HJ5qBu20mYoWH/exec";
+
+  document.getElementById("bookingForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const formData = {
+      name: document.getElementById("name").value,
+      phone: document.getElementById("phone").value,
+      service: document.getElementById("service").value,
+      date: document.getElementById("date").value,
+      notes: document.getElementById("notes").value
+    };
+
+    try {
+      const res = await fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" }
+      });
+
+      const json = await res.json();
+      if (json.status === "success") {
+        document.getElementById("responseMsg").textContent = "✅ Booking submitted!";
+        document.getElementById("bookingForm").reset();
+      } else {
+        document.getElementById("responseMsg").textContent = "❌ Something went wrong.";
+      }
+    } catch (err) {
+      console.error(err);
+      document.getElementById("responseMsg").textContent = "❌ Failed to send data.";
+    }
+  });
+</script>
